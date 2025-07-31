@@ -402,3 +402,44 @@ int height(Node *root) {
     int rightRoot= height(root->right);
     return (leftRoot > rightRoot ? leftRoot : rightRoot) +1;
 }
+Node* findMin(Node* node) {
+    while (node->left != NULL)
+        node = node->left;
+    return node;
+}
+
+Node* deleteNode(Node* root, int target) {
+    if (root == NULL) {
+        printf("Không tìm thấy giá trị %d để xóa\n", target);
+        return NULL;
+    }
+
+    if (target < root->data) {
+        root->left = deleteNode(root->left, target);
+    } else if (target > root->data) {
+        root->right = deleteNode(root->right, target);
+    } else {
+        // TH1: không có con
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+            return NULL;
+        }
+        // TH2: chỉ có 1 con
+        else if (root->left == NULL) {
+            Node* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+        // TH3: có 2 con
+        else {
+            Node* minRight = findMin(root->right);
+            root->data = minRight->data; // thay thế giá trị
+            root->right = deleteNode(root->right, minRight->data); // xóa node thay thế
+        }
+    }
+    return root;
+}
